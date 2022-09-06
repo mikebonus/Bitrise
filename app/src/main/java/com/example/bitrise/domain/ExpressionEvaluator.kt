@@ -1,13 +1,19 @@
 package com.example.bitrise.domain
 
+/**
+ * Uses the following grammar
+ * expression :	term | term + term | term − term
+ * term :		factor | factor * factor | factor / factor | factor % factor
+ * factor : 	number | ( expression ) | + factor | − factor
+ */
 class ExpressionEvaluator(
     private val expression: List<ExpressionPart>
 ) {
+
     fun evaluate(): Double {
-        return 0.0
+        return evalExpression(expression).value
     }
 
-    // function #1: eval-expression
     private fun evalExpression(expression: List<ExpressionPart>): ExpressionResult {
         val result = evalTerm(expression)
         var remaining = result.remainingExpression
@@ -29,7 +35,6 @@ class ExpressionEvaluator(
         }
     }
 
-    // function #2: eval-term
     private fun evalTerm(expression: List<ExpressionPart>): ExpressionResult {
         val result = evalFactor(expression)
         var remaining = result.remainingExpression
@@ -56,8 +61,9 @@ class ExpressionEvaluator(
         }
     }
 
-
-    // function #3: eval-factor
+    // A factor is either a number or an expression in parentheses
+    // e.g. 5.0, -7.5, -(3+4*5)
+    // But NOT something like 3 * 5, 4 + 5
     private fun evalFactor(expression: List<ExpressionPart>): ExpressionResult {
         return when(val part = expression.firstOrNull()) {
             ExpressionPart.Op(Operation.ADD) -> {
@@ -86,5 +92,4 @@ class ExpressionEvaluator(
         val remainingExpression: List<ExpressionPart>,
         val value: Double
     )
-
 }
